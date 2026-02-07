@@ -1,0 +1,9 @@
+torch
+torchvision
+open_clip_torch
+faiss-cpu
+pillow
+numpy
+pandas
+tqdm
+requests
