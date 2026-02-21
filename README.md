@@ -109,3 +109,5 @@ It's just a matter of moving folders but could still take around 5 min depending
 
 ## References
 Clothing Website Scraper, Tenzin Tsundue - https://github.com/tentsundue/clothing-sites-scraper
+
+OpenCLIP GitHub Repo, mlfoundations - https://github.com/mlfoundations/open_clip
