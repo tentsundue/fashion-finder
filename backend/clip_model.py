@@ -7,12 +7,12 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Load model & preprocess
 model, _, preprocess = open_clip.create_model_and_transforms(
-    "ViT-B-32",  # Model size (good balance)
+    "ViT-B-32",
     pretrained="laion2b_s34b_b79k"
 )
 model = model.to(device)
 
-def encode_image(image_path):
+def embed_image(image_path):
     """
     Loads an image, preprocesses it, generates a normalized CLIP embedding
     """

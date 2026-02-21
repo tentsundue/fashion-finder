@@ -2,7 +2,7 @@ import os
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
-from clip_model import encode_image
+from clip_model import embed_image
 
 """
 Purpose:
@@ -26,39 +26,27 @@ Values:
                              compare and retrieve similar items based on their visual features.
     
     2. Metadata: CSV     --> A structured file that contains information about each product, 
-                              such as brand, product ID, price, currency, category, and URL.
-    
-    3. rows: List[Dict]  --> A list of dictionaries where each dictionary contains the metadata
-                             for a single product. This metadata will be saved in a new CSV file 
-                             and will be used to display relevant information about the products 
-                             when search results are retrieved based on the CLIP embeddings.                       
+                              such as brand, product ID, price, currency, category, and URL.                   
 """
 
-# Load metadata CSV
+# Load metadata CSV and define headers
 metadata = pd.read_csv("data/metadata.csv")
 
-embeddings = [] 
-rows = []
+# Image path setup --> Each path follows the same structure: data/images/{brand}/{image_id}_{brand}_{product_id}_{variant_id}.jpg
+base_image_path = "data\\images\\"
+
+embeddings = []
+
 
 for _, row in tqdm(metadata.iterrows(), total=len(metadata)):
-    image_path = row['image_path']
-    image_embedding = encode_image(image_path)
-    embeddings.append(image_embedding.flatten())
+    image_id, product_id, variant_id, brand = row['image_id'], row['product_id'], row['variant_id'], row['brand']
+        
+    filename = f"{image_id}_{product_id}_{variant_id}.jpg"
+    image_path = os.path.join(base_image_path, brand, filename)
     
-    image_information = {
-        "image_path": image_path,
-        "brand": row['brand'],
-        "product_id": row['product_id'],
-        "price": row['price'],
-        "currency": row['currency'],
-        "category": row['category'],
-        "url": row["product_url"]
-        }
-    rows.append(image_information)
+    image_embedding = embed_image(image_path)
+    embeddings.append(image_embedding.flatten())
 
 # Save embeddings and metadata
 embeddings_array = np.array(embeddings)
 np.save("data/embeddings.npy", embeddings_array)
-
-metadata_df = pd.DataFrame(rows)
-metadata_df.to_csv("data/metadata_with_embeddings.csv", index=False)
