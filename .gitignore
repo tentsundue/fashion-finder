@@ -3,5 +3,6 @@ __pycache__/
 *.pyc
 
 data/images/
-embeddings/
+data/embeddings.npy
+data/faiss.index
 index/
