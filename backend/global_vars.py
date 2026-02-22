@@ -1,1 +1,1 @@
-categories = ["tops", "bottoms"]
+all_categories = ["tops", "bottoms"]
