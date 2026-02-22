@@ -2,7 +2,7 @@ import numpy as np
 import faiss
 import pandas as pd
 import os
-from global_vars import categories
+from global_vars import all_categories
 
 """
 Purpose:
@@ -19,10 +19,16 @@ metadata = pd.read_csv("data/metadata.csv")
 base_faiss_index_path = "data\\faiss\\"
 embeddings_path = "data\\embeddings\\"
 
-def build_faiss_index():
+def build_faiss_index() -> None:
+    """
+    Builds a FAISS index for each clothing category using the corresponding CLIP embeddings.
+    All indices are saved under data/faiss/...
+    (i.e. FAISS index for tops uses embeddings in the tops.npy file and saved as tops.index)
+    """
+
     os.makedirs(base_faiss_index_path, exist_ok=True)
 
-    for category in categories:
+    for category in all_categories:
         embedding_file = os.path.join(embeddings_path, f"{category}.npy")
         if not os.path.exists(embedding_file):
             print(f"Embedding file for category '{category}' not found at {embedding_file}. Skipping.")

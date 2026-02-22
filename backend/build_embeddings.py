@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from clip_model import embed_image
-from global_vars import categories
+from global_vars import all_categories
 
 """
 Purpose:
@@ -27,12 +27,21 @@ base_embeddings_path = "data\\embeddings\\"
 
 embedding_categories = {}
 
-def build_embeddings_map():
-    for category in categories:
+def build_embeddings_map() -> None:
+    """
+    Initialize an empty list for each category to store the corresponding image embeddings.
+    This will allow us to group embeddings by category and save them separately.
+    """
+    for category in all_categories:
         embedding_categories[category] = []
 
 
-def save_and_write_embeddings(embeddings, category):
+def save_and_write_embeddings(embeddings: list[np.ndarray], category: str) -> None:
+    """
+    Saves the list of embeddings for a given category as a .npy file.
+    All embeddings are saved under data/embeddings/...
+    (i.e. embeddings for tops are saved in data/embeddings/tops.npy)
+    """
     print(f"\nCategory: {category}, Number of embeddings: {len(embeddings)}")
       
     embeddings_array = np.array(embeddings).astype('float32')
@@ -43,7 +52,10 @@ def save_and_write_embeddings(embeddings, category):
     print(f"Embeddings built and saved successfully to {embedding_path}.")
 
 
-def build_embeddings():
+def build_embeddings() -> None:
+  """
+  Builds CLIP embeddings for each image in the metadata and saves them by category.
+  """
   # Iterate through metadata and generate embeddings for each image
   for _, row in tqdm(metadata.iterrows(), total=len(metadata)):
       image_id, product_id, variant_id, brand, category = (
