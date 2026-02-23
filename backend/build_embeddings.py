@@ -67,6 +67,11 @@ def build_embeddings() -> None:
                                                             )
           
       filename = f"{image_id}_{product_id}_{variant_id}.jpg"
+      
+      if filename not in os.listdir(os.path.join(base_image_path, brand)):
+          print(f"Image file {filename} not found in {os.path.join(base_image_path, brand)}. Skipping.")
+          continue
+      
       image_path = os.path.join(base_image_path, brand, filename)
       
       image_embedding = embed_image(image_path)
