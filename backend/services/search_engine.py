@@ -1,6 +1,6 @@
 import pandas as pd
 from clip_model import embed_image, predict_category
-from global_vars import all_categories
+from config import all_categories
 import faiss
 
 
@@ -17,7 +17,7 @@ def search(query_image_path: str, categories: list[str] = [], k: int = 5) -> lis
         categories = [likely_category]
 
     for category in categories:
-        assert category in categories, f"Category '{category}' not found. Available categories: {categories}"
+        assert category in all_categories, f"Category '{category}' not found. Available categories: {all_categories}"
         faiss_index = faiss.read_index(f"data/faiss/{category}.index")
         category_faiss_mappings[category] = faiss_index
 

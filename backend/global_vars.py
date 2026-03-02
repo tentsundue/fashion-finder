@@ -1,1 +1,0 @@
-all_categories = ["tops", "bottoms", "outerwear", "innerwear"]

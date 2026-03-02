@@ -2,7 +2,7 @@ import numpy as np
 import faiss
 import pandas as pd
 import os
-from global_vars import all_categories
+# from backend.config import all_categories # gonna need to change once db is up
 
 """
 Purpose:
@@ -18,6 +18,7 @@ Purpose:
 metadata = pd.read_csv("data/metadata.csv")
 base_faiss_index_path = "data\\faiss\\"
 embeddings_path = "data\\embeddings\\"
+all_categories = ["tops", "bottoms", "innerwear", "outerwear"]
 
 def build_faiss_index() -> None:
     """

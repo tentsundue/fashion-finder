@@ -2,8 +2,8 @@ import os
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
-from clip_model import embed_image
-from global_vars import all_categories
+from backend.services.clip_model import embed_image
+# from backend.config import all_categories # gonna need to change once db is up
 
 """
 Purpose:
@@ -26,6 +26,7 @@ base_image_path = "data\\images\\"
 base_embeddings_path = "data\\embeddings\\"
 
 embedding_categories = {}
+all_categories = ["tops", "bottoms", "innerwear", "outerwear"]
 
 def build_embeddings_map() -> None:
     """
