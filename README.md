@@ -90,3 +90,10 @@ Clothing Website Scraper, Tenzin Tsundue - https://github.com/tentsundue/clothin
 OpenCLIP GitHub Repository, mlfoundations - https://github.com/mlfoundations/open_clip
 
 AWS SDK for Python (Boto3), AWS - https://aws.amazon.com/sdk-for-python/
+
+FastAPI Documentation, FastAPI
+ - [Bigger Applications](https://fastapi.tiangolo.com/tutorial/bigger-applications/#include-an-apirouter-with-a-custom-prefix-tags-responses-and-dependencies)
+
+ - [FastAPI Class](https://fastapi.tiangolo.com/reference/fastapi/#fastapi.FastAPI--example)
+ 
+ - [Declare Request Example Data](https://fastapi.tiangolo.com/tutorial/schema-extra-example/#examples-in-json-schema-openapi) 

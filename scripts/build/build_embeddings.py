@@ -6,6 +6,7 @@ from backend.services.clip_model import embed_image
 # from backend.config import all_categories # gonna need to change once db is up
 
 """
+NOTE: For testing purposes (pre-db). Not involved in the actual backend implementation (api routes, db schemas, etc.).
 Purpose:
  - Load metadata CSV
     - For each image, generate CLIP embedding and store it in a list

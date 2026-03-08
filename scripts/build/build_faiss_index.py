@@ -5,6 +5,7 @@ import os
 # from backend.config import all_categories # gonna need to change once db is up
 
 """
+NOTE: For testing purposes (pre-db). Not involved in the actual backend implementation (api routes, db schemas, etc.).
 Purpose:
     - Load the saved CLIP embeddings and metadata.
     

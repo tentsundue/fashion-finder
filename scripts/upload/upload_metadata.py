@@ -52,15 +52,7 @@ product_sizes_insert_query = """
                                 ON CONFLICT (product_id, size) DO NOTHING
                              """
 
-
-def upload_metadata(db: Session) -> dict:
-    rows_updated = {"products": 0, "product_colors": 0, "product_images": 0, "product_sizes": 0}
-
-    products_sql = text(product_insert_query)
-    product_colors_sql = text(product_colors_insert_query)
-    product_sizes_sql = text(product_sizes_insert_query)
-    product_images_sql = text(product_images_insert_query)
-
+def create_batches() -> tuple[list[dict], list[dict], list[dict], list[dict]]:
     products_added = set()
     
     products_batch = []
@@ -73,6 +65,7 @@ def upload_metadata(db: Session) -> dict:
         sizes = json.loads(row["sizes"])
 
         product_id = row['product_id']
+        s3_product_id = product_id.split("_")[1] # s3 url goes: brand/(product_id without the brandname)/color_id.jpg
         image_id = row['image_id']
         color_id = row['variant_id']
         brand = row['brand']
@@ -118,24 +111,41 @@ def upload_metadata(db: Session) -> dict:
                             "product_id": product_id,
                             "color_id": color_id,
                             "embedding": image_embedding.flatten().tolist(), # Convert numpy array to list for JSON serialization
-                            "s3_url": f"https://{settings.S3_BUCKET}.s3.amazonaws.com/products/{brand}/{product_id}/{color_id}.jpg"
+                            "s3_url": f"https://{settings.S3_BUCKET}.s3.amazonaws.com/products/{brand.lower()}/{s3_product_id}/{color_id}.jpg"
                         })
+    
+    return products_batch, colors_batch, images_batch, sizes_batch
 
+def upload_metadata(
+            db: Session, 
+            products_table: bool=False, 
+            product_colors_table: bool=False, 
+            product_images_table: bool=False, 
+            product_sizes_table: bool=False
+        ) -> dict:
+    rows_updated = {"products": 0, "product_colors": 0, "product_images": 0, "product_sizes": 0}
+
+    products_sql = text(product_insert_query)
+    product_colors_sql = text(product_colors_insert_query)
+    product_sizes_sql = text(product_sizes_insert_query)
+    product_images_sql = text(product_images_insert_query)
+
+    products_batch, colors_batch, images_batch, sizes_batch = create_batches()
 
     try:
-        products_res = db.execute(products_sql, products_batch)
-        colors_res = db.execute(product_colors_sql, colors_batch)
-        sizes_res = db.execute(product_sizes_sql, sizes_batch)
-        images_res = db.execute(product_images_sql, images_batch)
+        products_res = db.execute(products_sql, products_batch) if products_table else None
+        colors_res = db.execute(product_colors_sql, colors_batch) if product_colors_table else None
+        sizes_res = db.execute(product_sizes_sql, sizes_batch) if product_sizes_table else None
+        images_res = db.execute(product_images_sql, images_batch) if product_images_table else None
         db.commit()
     except Exception:
         db.rollback()
         raise
 
-    rows_updated["products"] = products_res.rowcount
-    rows_updated["product_colors"] = colors_res.rowcount
-    rows_updated["product_images"] = images_res.rowcount
-    rows_updated["product_sizes"] = sizes_res.rowcount
+    rows_updated["products"] = products_res.rowcount if products_res else 0
+    rows_updated["product_colors"] = colors_res.rowcount if colors_res else 0
+    rows_updated["product_images"] = images_res.rowcount if images_res else 0
+    rows_updated["product_sizes"] = sizes_res.rowcount if sizes_res else 0
 
     return rows_updated
 
@@ -143,6 +153,14 @@ def upload_metadata(db: Session) -> dict:
 if __name__ == '__main__':
     session = db = next(get_db())
     print("Connected to session successfully.")
-    res = upload_metadata(session)
-    print(res) # can verify the counts in sanity_check.txt (Just make sure that it is updated with the most recent metadata.csv)
+    res = upload_metadata(
+                            session, 
+                            product_images_table=True, 
+                            product_colors_table=True, 
+                            products_table=True, 
+                            product_sizes_table=True
+                          )
+    
+    # can verify the counts in sanity_check.txt (Just make sure that it is updated with the most recent metadata.csv)
+    print(res)
     

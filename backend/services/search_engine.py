@@ -3,6 +3,7 @@ from clip_model import embed_image, predict_category
 from config import all_categories
 import faiss
 
+"""For testing. Uses FAISS instead of pgvector"""
 
 # Load FAISS index and metadata
 metadata = pd.read_csv("data/metadata.csv")
