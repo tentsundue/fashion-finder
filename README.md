@@ -7,13 +7,12 @@ This is a new project that aims to let users find an assortment of clothes in th
 ### ML:
 - CLIP (OpenClip)
 - Python (PyTorch)
-- Facebook AI Similiarity Search (FAISS)
 - NumPy, Pandas
 
 ### Backend/API/Database:
-- FastAPI
-- Postgres w/ Amazon EC2 or RDS
-- Amazon S3 
+- FastAPI hosted on 
+- Postgres + pgvector hosted on Amazon RDS
+- Amazon S3
 
 ### Frontend/UI:
 - Next.js
