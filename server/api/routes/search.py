@@ -3,10 +3,10 @@ from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 
-from backend.schemas.search import SearchRequestModel, SearchResponseModel
-from backend.db.session import get_db
+from server.schemas.search import SearchRequestModel, SearchResponseModel
+from server.db.session import get_db
 
-from backend.services.clip_model import embed_image
+from server.services.clip_model import embed_image
 
 router = APIRouter()
 

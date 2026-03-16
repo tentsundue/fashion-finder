@@ -3,8 +3,8 @@ from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 
-from backend.schemas.products import GetProductResponseModel, GetProductsResponseModel
-from backend.db.session import get_db
+from server.schemas.products import GetProductResponseModel, GetProductsResponseModel
+from server.db.session import get_db
 
 router = APIRouter()
 
