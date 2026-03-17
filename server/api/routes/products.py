@@ -35,17 +35,26 @@ async def get_product(product_id: str, db: Session = Depends(get_db)):
                                   AND p_img.product_id = :product_id
                                   AND p_col.color_id = p_img.color_id;
                               """
-    
+
+    get_product_sizes_query = """
+                              SELECT
+                                p_size.size
+                              FROM product_sizes as p_size
+                              WHERE p_size.product_id = :product_id;
+                            """
     get_product_sql = text(get_product_query)
     get_product_colors_sql = text(get_product_colors_query)
+    get_product_sizes_sql = text(get_product_sizes_query)
 
     try:
       product_res = db.execute(get_product_sql, {"product_id": product_id}).fetchone()
       product_color_res = db.execute(get_product_colors_sql, {"product_id": product_id}).mappings().all()
-    
+      product_size_res = db.execute(get_product_sizes_sql, {"product_id": product_id}).mappings().all()
+
       return {
               "product": product_res, 
-              "colors": product_color_res
+              "colors": product_color_res,
+              "sizes": product_size_res
              }
     
     except Exception as e:
