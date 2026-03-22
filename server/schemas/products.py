@@ -35,16 +35,16 @@ class Product(BaseModel):
         }
     )
 
-
 class ProductColor(BaseModel):
     color: str
     s3_url: str
 
 
+class ProductSize(BaseModel):
+    size: str
+
+
 class GetProductResponseModel(BaseModel):
     product: Product
     colors: List[ProductColor]
-
-
-class GetProductsResponseModel(BaseModel):
-    products: List[Product]
+    sizes: List[ProductSize]

@@ -1,7 +1,8 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
-
-class GetSearchProductsModel(BaseModel):
+class ProductSearchItem(BaseModel):
     product_id: str
     product_url: str
 
@@ -20,11 +21,32 @@ class GetSearchProductsModel(BaseModel):
     colors: list[str]
     s3_urls: list[str]
 
+class BaseProductSearchResponseModel(BaseModel):
+    products: list[ProductSearchItem]
+    total: Optional[int]
+    page: int
+    page_limit: int
+    has_next: bool
+
+
+class BaseProductSearchRequestModel(BaseModel):
+    page_limit: int = 15
+    page: int = 1
+
+
+class ProductSearchByFilterRequestModel(BaseProductSearchRequestModel):
+    filter_name: str
+    
+
+class SimilarProductSearchItem(ProductSearchItem):
     distance: float
 
+class SimilarProductsSearchResponseModel(BaseModel):
+    products: list[SimilarProductSearchItem]
 
-class SearchRequestModel(BaseModel):
+
+class SimilarProductsSearchRequestModel(BaseProductSearchRequestModel):
     image_path: str
-    k: int = 30
+    max_distance: float = 0.4
     brands: list[str] | None = None
     categories: list[str] | None = None
