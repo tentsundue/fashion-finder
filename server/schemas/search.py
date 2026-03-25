@@ -18,8 +18,7 @@ class ProductSearchItem(BaseModel):
     rating: float
     rating_count: int
 
-    colors: list[str]
-    s3_urls: list[str]
+    color_to_s3_url: dict[str, str] # Color name -> s3_url
 
 class BaseProductSearchResponseModel(BaseModel):
     products: list[ProductSearchItem]
