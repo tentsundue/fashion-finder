@@ -24,12 +24,12 @@ interface ProductBoxProps {
 export default function ProductBox({ productInfo }: ProductBoxProps) {
   const UniqloCard = (
     <Image
-      w="15%"
-      h="15%"
-      position="absolute"
-      bottom={0}
-      right={0}
       src={uniqloLogo}
+      position="absolute"
+      bottom="8px"
+      right="8px"
+      boxSize="100px"
+      objectFit="contain"
     />
   );
 
@@ -45,6 +45,7 @@ export default function ProductBox({ productInfo }: ProductBoxProps) {
         motionPreset="slide-in-bottom">
         <Dialog.Trigger asChild>
           <Flex
+            backgroundColor="cardBg"
             data-state="open"
             _open={{
               animation: "fade-in 800ms, scale-in 1000ms",
@@ -61,17 +62,18 @@ export default function ProductBox({ productInfo }: ProductBoxProps) {
               transform: "translateY(-1px)",
               transition: "0.3s ease",
             }}
-            border="1px solid gray.300"
-            borderWidth={1}
             borderRadius="md"
             boxShadow="sm"
-            maxW="xl"
+            maxH="xxl"
+            maxW="lg"
             mx="auto">
             {/* Image Carousel */}
-            <ImageCarousel
-              color_to_s3_url={productInfo.color_to_s3_url}
-              productName={productInfo.name}
-            />
+            <Box w="100%" h="lg" overflow="hidden">
+              <ImageCarousel
+                color_to_s3_url={productInfo.color_to_s3_url}
+                productName={productInfo.name}
+              />
+            </Box>
 
             <Separator variant="solid" mt={7} size="sm" />
 
@@ -83,18 +85,11 @@ export default function ProductBox({ productInfo }: ProductBoxProps) {
               justifyContent="left"
               gap={2}
               alignItems="left">
-              <Text
-                fontWeight="bold"
-                fontSize="2xl"
-                fontFamily="Georgia, sans-serif"
-                letterSpacing={1}>
+              <Text fontWeight="bold" fontSize="2xl">
                 {productInfo.name}
               </Text>
 
-              <Text
-                fontSize="md"
-                color="gray.500"
-                fontFamily="Georgia, sans-serif">
+              <Text fontSize="md" color="secondaryTextColor">
                 {productInfo.category.toUpperCase()} |{" "}
                 {productInfo.gender.toUpperCase()}
               </Text>
@@ -102,7 +97,6 @@ export default function ProductBox({ productInfo }: ProductBoxProps) {
               <Text
                 color="black.500"
                 fontSize="4xl"
-                fontFamily="Roboto, sans-serif"
                 fontWeight="semibold"
                 mt={2}
                 p={1}>
@@ -112,11 +106,7 @@ export default function ProductBox({ productInfo }: ProductBoxProps) {
                 })}
               </Text>
 
-              <Box
-                color="gray.500"
-                fontFamily="Roboto, sans-serif"
-                letterSpacing={1}
-                mt={2}>
+              <Box color="secondaryTextColor" letterSpacing={1} mt={2}>
                 <StarFilled />{" "}
                 <Text as="span" fontWeight="bold">
                   {productInfo.rating}

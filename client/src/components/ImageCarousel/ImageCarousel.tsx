@@ -16,7 +16,7 @@ export default function ImageCarousel({
   const [carouselPage, setCarouselPage] = useState(0);
 
   const carouselIndicators = (
-    <Carousel.IndicatorGroup>
+    <Carousel.IndicatorGroup gap={5} justifyContent="center">
       {Object.entries(color_to_s3_url).map(([color, _], index) => (
         <Carousel.Indicator
           key={index}
@@ -46,8 +46,13 @@ export default function ImageCarousel({
       autoplay={verticalView ? { delay: 3000 } : false}
       orientation={verticalView ? "vertical" : "horizontal"}
       slideCount={Object.keys(color_to_s3_url).length}
-      maxW="lg"
+      position="relative"
+      h={verticalView ? "600px" : "500px"}
+      w={verticalView ? "800px" : "360px"}
+      maxH="100%"
+      maxW="100%"
       mx="auto"
+      pb="20px"
       page={carouselPage}
       onPageChange={(e) => setCarouselPage(e.page)}
       allowMouseDrag>
@@ -63,7 +68,7 @@ export default function ImageCarousel({
                   alt={"Image of " + productName + " in " + color}
                   w="100%"
                   h="100%"
-                  objectFit="contain"
+                  objectFit="cover"
                 />
               </Carousel.Item>
             ))}
@@ -74,12 +79,19 @@ export default function ImageCarousel({
           <Carousel.Control
             h="100%"
             justifyContent="space-between"
-            gap="4"
+            gap="10"
             width="full">
             <Carousel.PrevTrigger asChild>
               <IconButton
-                size="xs"
-                variant="outline"
+                position="absolute"
+                left="8px"
+                top="50%"
+                transform="translateY(-50%)"
+                zIndex={2}
+                size="sm"
+                variant="ghost"
+                bg="rgba(255,255,255,0.6)"
+                _hover={{ bg: "rgba(255,255,255,0.9)" }}
                 onClick={(e) => e.stopPropagation()}>
                 <CaretLeftFilled />
               </IconButton>
@@ -88,20 +100,26 @@ export default function ImageCarousel({
               {Object.entries(color_to_s3_url).map(([color, url], index) => (
                 <Carousel.Item key={index} index={index}>
                   <Image
-                    aspectRatio="16/9"
                     src={url}
                     alt={"Image of " + productName + " in " + color}
                     w="100%"
                     h="100%"
-                    objectFit="contain"
+                    objectFit="cover"
                   />
                 </Carousel.Item>
               ))}
             </Carousel.ItemGroup>
             <Carousel.NextTrigger asChild>
               <IconButton
-                size="xs"
-                variant="outline"
+                position="absolute"
+                right="8px"
+                top="50%"
+                transform="translateY(-50%)"
+                zIndex={2}
+                size="sm"
+                variant="ghost"
+                bg="rgba(255,255,255,0.6)"
+                _hover={{ bg: "rgba(255,255,255,0.9)" }}
                 onClick={(e) => e.stopPropagation()}>
                 <CaretRightFilled />
               </IconButton>

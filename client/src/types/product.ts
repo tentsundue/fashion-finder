@@ -14,5 +14,7 @@ export interface ProductInfo {
   rating: number;
   rating_count: number;
 
+  sizes?: string[]; // e.g. ["S", "M", "L", "XL"]
+
   color_to_s3_url: Record<string, string>; // {color name: s3 url, ...}
 }
