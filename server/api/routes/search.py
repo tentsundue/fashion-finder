@@ -92,6 +92,15 @@ async def search_products(
                                 GROUP BY pc.product_id
                             )
                             """
+    product_sizes_agg = """
+                        product_sizes_agg AS (
+                            SELECT
+                                ps.product_id,
+                                array_agg(ps.size) AS sizes
+                            FROM product_sizes ps
+                            GROUP BY ps.product_id
+                        )
+                        """
     unique_products_from_tables = """
                                     SELECT
                                         p.product_id,
@@ -105,12 +114,15 @@ async def search_products(
                                         p.price,
                                         p.currency,
                                         pvm.variants,
+                                        psa.sizes,
                                         rp.distance
                                     FROM ranked_products AS rp
                                         JOIN products AS p
                                             ON p.product_id = rp.product_id
                                         LEFT JOIN product_variant_mapping AS pvm
                                             ON p.product_id = pvm.product_id
+                                        LEFT JOIN product_sizes_agg AS psa
+                                            ON p.product_id = psa.product_id
                                     ORDER BY rp.distance ASC;
                                     LIMIT :page_limit OFFSET :page_offset;
                                     """
@@ -119,6 +131,7 @@ async def search_products(
         related_images_table + 
         ranked_products_table + 
         product_variant_mapping + 
+        product_sizes_agg + 
         unique_products_from_tables
     )
     
@@ -160,23 +173,34 @@ async def search_newest_k_products(db: Session = Depends(get_db), limit: int = 2
                                         ON pc.product_id = pi.product_id
                                         AND pc.color_id = pi.color_id
                                     GROUP BY pc.product_id
+                                ),
+                                product_sizes_agg AS (
+                                    SELECT
+                                        ps.product_id,
+                                        array_agg(ps.size) AS sizes
+                                    FROM product_sizes ps
+                                    WHERE ps.product_id IN (SELECT product_id FROM newest_products)
+                                    GROUP BY ps.product_id
                                 )
                                 SELECT
-                                    p.product_id,
-                                    p.name,
-                                    p.brand,
-                                    p.gender,
-                                    p.category,
-                                    p.product_url,
-                                    p.rating,
-                                    p.rating_count,
-                                    p.price,
-                                    p.currency,
-                                    pvm.variants
+                                    np.product_id,
+                                    np.name,
+                                    np.brand,
+                                    np.gender,
+                                    np.category,
+                                    np.product_url,
+                                    np.rating,
+                                    np.rating_count,
+                                    np.price,
+                                    np.currency,
+                                    pvm.variants,
+                                    psa.sizes
                                 FROM newest_products AS np
                                     LEFT JOIN product_variant_mapping AS pvm
-                                        ON p.product_id = pvm.product_id
-                                ORDER BY p.created_at DESC;
+                                        ON np.product_id = pvm.product_id
+                                    LEFT JOIN product_sizes_agg AS psa
+                                        ON np.product_id = psa.product_id
+                                ORDER BY np.created_at DESC;
                             """
     get_newest_k_products_sql = text(get_newest_k_products_query)
 
@@ -220,6 +244,14 @@ async def search_products_by_brand(request: ProductSearchByFilterRequestModel, d
                                     AND pc.color_id = pi.color_id
                                 WHERE pc.product_id IN (SELECT product_id FROM filtered_products)
                                 GROUP BY pc.product_id
+                            ),
+                            product_sizes_agg AS (
+                                    SELECT
+                                        ps.product_id,
+                                        array_agg(ps.size) AS sizes
+                                    FROM product_sizes ps
+                                    WHERE ps.product_id IN (SELECT product_id FROM filtered_products)
+                                    GROUP BY ps.product_id
                             )
                             SELECT
                                 fp.product_id,
@@ -232,10 +264,13 @@ async def search_products_by_brand(request: ProductSearchByFilterRequestModel, d
                                 fp.rating_count,
                                 fp.price,
                                 fp.currency,
-                                pvm.variants
+                                pvm.variants,
+                                psa.sizes
                             FROM filtered_products AS fp
                             LEFT JOIN product_variant_mapping AS pvm
                                 ON fp.product_id = pvm.product_id
+                            LEFT JOIN product_sizes_agg AS psa
+                                ON fp.product_id = psa.product_id
                             LIMIT :page_limit OFFSET :page_offset;
                           """
     total_brand_products_query = "SELECT COUNT(*) FROM products WHERE brand = :brand"
@@ -260,7 +295,8 @@ async def search_products_by_brand(request: ProductSearchByFilterRequestModel, d
                }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
+
+ 
 @router.post("/categories/{category}", response_model=BaseProductSearchResponseModel)
 async def search_products_by_category(request: ProductSearchByFilterRequestModel, db: Session = Depends(get_db)):
     search_by_category_query = """
@@ -287,6 +323,14 @@ async def search_products_by_category(request: ProductSearchByFilterRequestModel
                                     AND pc.color_id = pi.color_id
                                 WHERE pc.product_id IN (SELECT product_id FROM filtered_products)
                                 GROUP BY pc.product_id
+                            ),
+                            product_sizes_agg AS (
+                                SELECT
+                                    ps.product_id,
+                                    array_agg(ps.size) AS sizes
+                                FROM product_sizes ps
+                                WHERE ps.product_id IN (SELECT product_id FROM filtered_products)
+                                GROUP BY ps.product_id
                             )
                             SELECT
                                 fp.product_id,
