@@ -1,4 +1,5 @@
 import ProductBox from "@/components/ProductBox/ProductBox";
+import Dropzone from "@/components/Dropzone/Dropzone";
 import uniqlo1 from "@/assets/uniqlo1.jpg";
 import uniqlo2 from "@/assets/uniqlo2.jpg";
 import uniqlo3 from "@/assets/uniqlo3.jpg";
@@ -27,6 +28,11 @@ export default function Home() {
   const products = Array(6).fill(sampleProductInfo);
   return (
     <>
+      <Dropzone
+        onFilesUploaded={(files) => {
+          console.log("Files uploaded:", files);
+        }}
+      />
       <Box
         display="grid"
         gridTemplateColumns="repeat(auto-fill, minmax(350px, 1fr))"
